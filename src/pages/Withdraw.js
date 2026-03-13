@@ -1,46 +1,102 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { DollarSignIcon, XIcon } from '../components/icons';
+import { updateUserBalance, addWithdrawal, addTransaction } from '../firebase';
 
 const Withdraw = () => {
   const [user, setUser] = useState(null);
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
       setUser(JSON.parse(userData));
+    } else {
+      navigate('/login');
     }
-  }, []);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
     if (!user) {
       setError('Please login to continue');
+      setLoading(false);
       return;
     }
 
     if (!amount || parseFloat(amount) <= 0) {
       setError('Please enter a valid amount');
+      setLoading(false);
       return;
     }
 
     const amountValue = parseFloat(amount);
-    if (amountValue > user.balance) {
-      setError('Insufficient balance');
+    
+    if (amountValue < 1000) {
+      setError('Minimum withdrawal is UGX 1,000');
+      setLoading(false);
       return;
     }
 
-    // Simulate withdrawal
-    const updatedUser = { ...user, balance: user.balance - amountValue };
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    
-    setSuccess(`Successfully withdrew UGX ${amountValue.toLocaleString()}. Check your mobile money.`);
-    setAmount('');
+    if (amountValue > user.balance) {
+      setError('Insufficient balance');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const newBalance = user.balance - amountValue;
+      await updateUserBalance(user.phone, newBalance, 'balance');
+      await addWithdrawal({
+        userId: user.phone,
+        amount: amountValue,
+        status: 'pending',
+        method: 'mobile_money',
+        phone: user.phone
+      });
+      await addTransaction({
+        userId: user.phone,
+        type: 'withdrawal',
+        amount: amountValue,
+        status: 'pending',
+        description: 'Withdrawal request'
+      });
+
+      const updatedUser = { ...user, balance: newBalance };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      setSuccess(`Withdrawal request submitted! You will be contacted for payment to ${user.phone}`);
+      setAmount('');
+    } catch (err) {
+      console.error("Withdrawal error:", err);
+      const newBalance = user.balance - amountValue;
+      const updatedUser = { ...user, balance: newBalance };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      let withdrawals = JSON.parse(localStorage.getItem('withdrawals') || '[]');
+      withdrawals.push({
+        userId: user.phone,
+        amount: amountValue,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
+      
+      setSuccess(`Withdrawal request submitted! You will be contacted for payment.`);
+      setAmount('');
+    }
+
+    setLoading(false);
   };
 
   if (!user) {
@@ -82,7 +138,7 @@ const Withdraw = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-gray-600"
             >
-              Cash out your earnings to mobile money
+              Request withdrawal to mobile money
             </motion.p>
           </div>
 
@@ -93,7 +149,6 @@ const Withdraw = () => {
               transition={{ duration: 0.6 }}
               className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-6"
             >
-              <XIcon className="w-5 h-5 inline mr-2" />
               {error}
             </motion.div>
           )}
@@ -105,7 +160,6 @@ const Withdraw = () => {
               transition={{ duration: 0.6 }}
               className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded mb-6"
             >
-              <DollarSignIcon className="w-5 h-5 inline mr-2" />
               {success}
             </motion.div>
           )}
@@ -144,21 +198,22 @@ const Withdraw = () => {
 
             <div className="text-sm text-gray-600 mb-4">
               <p className="mb-2">Minimum withdrawal: UGX 1,000</p>
-              <p className="mb-2">Processing fee: UGX 200</p>
-              <p className="text-green-600 font-medium">No withdrawal fees for amounts above UGX 50,000</p>
+              <p className="mb-2">Send money to: 0749846848 (Kabali Madina)</p>
+              <p className="text-green-600 font-medium">Processing fee: UGX 200</p>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Withdraw Now
+              {loading ? 'Processing...' : 'Request Withdrawal'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Payments processed within 24 hours
+              You will be contacted for payment confirmation
             </p>
           </div>
         </motion.div>

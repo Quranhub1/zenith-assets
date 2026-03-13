@@ -1,59 +1,120 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { XIcon } from '../components/icons';
+import { getUser, createUser } from '../firebase';
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
-  });
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    setError('');
-  };
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.phone || !formData.password) {
-      setError('Please fill in all fields');
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    if (!phone || !password || !confirmPassword) {
+      setError('Please fill in all required fields');
+      setLoading(false);
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (password.length < 4) {
+      setError('Password must be at least 4 characters');
+      setLoading(false);
       return;
     }
 
-    // Simulate registration
-    if (formData.phone.length === 10 && formData.phone.startsWith('0')) {
-      // Store user data in localStorage
-      localStorage.setItem('user', JSON.stringify({
-        phone: '256' + formData.phone.substring(1),
-        name: formData.name,
-        balance: 0,
-        referrals: 0,
-        commission: 0
-      }));
+    try {
+      // Check if user already exists
+      const existingUser = await getUser(phone);
       
-      navigate('/dashboard');
-    } else {
-      setError('Please enter a valid phone number');
+      if (existingUser) {
+        setError('Phone number already registered');
+        setLoading(false);
+        return;
+      }
+
+      // Get referrer info if referral code provided
+      let referrer = null;
+      if (referralCode) {
+        referrer = await getUser(referralCode);
+      }
+
+      // Create new user
+      const newUser = {
+        phone,
+        password,
+        balance: 0,
+        commission: 0,
+        referrals: 0,
+        referredBy: referrer ? referrer.phone : null,
+        createdAt: new Date().toISOString()
+      };
+
+      const result = await createUser(newUser);
+      
+      if (result.success) {
+        // If referred, update referrer's referrals count
+        if (referrer) {
+          // This would be handled on the backend in production
+        }
+        
+        setSuccess('Account created successfully!');
+        localStorage.setItem('user', JSON.stringify(newUser));
+        
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+      } else {
+        // Fallback to local storage
+        localStorage.setItem('user_' + phone, JSON.stringify(newUser));
+        localStorage.setItem('user', JSON.stringify(newUser));
+        setSuccess('Account created successfully!');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      // Fallback to local storage
+      const newUser = {
+        phone,
+        password,
+        balance: 0,
+        commission: 0,
+        referrals: 0,
+        referredBy: null,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('user_' + phone, JSON.stringify(newUser));
+      localStorage.setItem('user', JSON.stringify(newUser));
+      setSuccess('Account created successfully!');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -80,7 +141,7 @@ const Register = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-gray-600"
             >
-              Join thousands of users earning money
+              Start earning today
             </motion.p>
           </div>
 
@@ -91,37 +152,31 @@ const Register = () => {
               transition={{ duration: 0.6 }}
               className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-6"
             >
-              <XIcon className="w-5 h-5 inline mr-2" />
               {error}
+            </motion.div>
+          )}
+
+          {success && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded mb-6"
+            >
+              {success}
             </motion.div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter your full name"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
+                Phone Number *
               </label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Enter your phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="07xxxxxxxx"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
@@ -129,14 +184,13 @@ const Register = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+                Password *
               </label>
               <input
                 type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
@@ -144,32 +198,45 @@ const Register = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
+                Confirm Password *
               </label>
               <input
                 type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Referral Code (Optional)
+              </label>
+              <input
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+                placeholder="Enter referral code"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold text-lg hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Account
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account? 
-              <Link to="/login" className="text-blue-600 hover:text-blue-500 font-medium">
-                Sign in
+            <p className="text-gray-600">
+              Already have an account?{' '}
+              <Link to="/login" className="text-blue-600 hover:underline font-semibold">
+                Sign In
               </Link>
             </p>
           </div>
