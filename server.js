@@ -48,7 +48,8 @@ app.post('/api/pay', async (req, res) => {
         );
         res.json(response.data); // Sends the redirect URL to the frontend
     } catch (error) {
-        res.status(500).json({ error: "Payment initiation failed" });
+        console.error("Payment Error:", error.response?.data || error.message);
+        res.status(500).json({ error: "Payment initiation failed", details: error.response?.data || error.message });
     }
 });
 
