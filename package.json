@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "server.js",
   "description": "Zenith Assets - Investment Platform with PesaPal Integration",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "dependencies": {
     "axios": "^1.6.0",
     "cors": "^2.8.5",

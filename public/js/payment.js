@@ -31,6 +31,6 @@ async function initiatePesaPal() {
         }
     } catch (e) {
         console.error('Payment error:', e);
-        alert("Server Offline. Start the Node.js server first!");
+        alert("Server offline or unreachable. Please check your connection and try again.");
     }
 }
