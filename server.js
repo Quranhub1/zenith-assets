@@ -33,7 +33,8 @@ app.post('/api/pay', async (req, res) => {
         amount: amount,
         description: "Investment Top-up",
         callback_url: process.env.CALLBACK_URL,
-        notification_id: process.env.PESAPAL_NOTIFICATION_ID || "",
+        redirect_mode: "SUCCESS",
+        notification_id: process.env.PESAPAL_NOTIFICATION_ID || null,
         billing_address: {
             email_address: email || "user@zenith.com",
             phone_number: phone
