@@ -27,6 +27,7 @@ app.post('/api/pay', async (req, res) => {
     const { amount, phone, email } = req.body;
     const token = await getPesaPalToken();
 
+    // Build order data - only add notification_id if it's set
     const orderData = {
         id: "ZENITH-" + Math.floor(Math.random() * 100000),
         currency: "UGX",
@@ -34,12 +35,16 @@ app.post('/api/pay', async (req, res) => {
         description: "Investment Top-up",
         callback_url: process.env.CALLBACK_URL,
         redirect_mode: "SUCCESS",
-        notification_id: process.env.PESAPAL_NOTIFICATION_ID || null,
         billing_address: {
             email_address: email || "user@zenith.com",
             phone_number: phone
         }
     };
+    
+    // Add notification_id only if provided
+    if (process.env.PESAPAL_NOTIFICATION_ID) {
+        orderData.notification_id = process.env.PESAPAL_NOTIFICATION_ID;
+    }
 
     try {
         const response = await axios.post(
