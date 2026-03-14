@@ -19,7 +19,7 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem('zenith_user');
     setUser(null);
-    navigate('/register');
+    navigate('/login');
   };
 
   const navLinks = [

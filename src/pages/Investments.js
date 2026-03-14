@@ -29,75 +29,81 @@ const Investments = () => {
   const investmentPackages = [
     {
       id: 1,
-      name: 'iPhone Starter Pack',
-      description: 'Start your investment journey with the power of Apple ecosystem',
-      image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-black-titanium-select-202309?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1692875661171',
+      name: 'AirPods Starter Pack',
+      description: 'Start your investment journey with premium audio',
+      image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=800',
       minAmount: 20000,
-      maxAmount: 500000,
+      maxAmount: 50000,
       duration: '30 days',
       dailyReturns: '3%',
-      totalReturns: '90%',
-      category: 'Starter'
+      totalReturns: 'UGX 38,000',
+      category: 'Starter',
+      locked: false
     },
     {
       id: 2,
-      name: 'MacBook Growth Plan',
-      description: 'Grow your wealth with professional computing power',
-      image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/macbook-air-15-midnight-select-202306?wid=4536&hei=2551&fmt=jpeg&qlt=90&.v=1684518479433',
+      name: 'iPhone SE Growth Plan',
+      description: 'Grow your wealth with powerful smartphone technology',
+      image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800',
       minAmount: 100000,
       maxAmount: 1000000,
       duration: '45 days',
       dailyReturns: '4%',
-      totalReturns: '180%',
-      category: 'Growth'
+      totalReturns: 'UGX 280,000',
+      category: 'Growth',
+      locked: true
     },
     {
       id: 3,
-      name: 'iPad Premium Bundle',
-      description: 'Premium investment with cutting-edge tablet technology',
-      image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-model-select-gallery-2-202210?wid=3720&hei=2080&fmt=p-jpg&qlt=80&.v=1664562171583',
+      name: 'iPhone 14 Premium Bundle',
+      description: 'Premium investment with flagship smartphone technology',
+      image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800',
       minAmount: 150000,
       maxAmount: 2000000,
       duration: '60 days',
       dailyReturns: '5%',
-      totalReturns: '300%',
-      category: 'Premium'
+      totalReturns: 'UGX 600,000',
+      category: 'Premium',
+      locked: true
     },
     {
       id: 4,
-      name: 'Apple Watch Elite',
-      description: 'Elite investment for maximum returns with wearable tech',
-      image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/watch-s9-alum-nc-cellular-select-202309?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1694052013766',
+      name: 'iPhone 15 Pro Max Elite',
+      description: 'Elite investment for maximum returns with flagship tech',
+      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
       minAmount: 250000,
       maxAmount: 5000000,
       duration: '90 days',
       dailyReturns: '6%',
-      totalReturns: '540%',
-      category: 'Elite'
+      totalReturns: 'UGX 1,600,000',
+      category: 'Elite',
+      locked: true
     },
     {
       id: 5,
-      name: 'AirPods Platinum',
-      description: 'VIP investment with premium audio technology',
-      image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/airpods-max-select-silver-202011?wid=940&hei=1112&fmt=png-alpha&.v=1604021221000',
+      name: 'MacBook Pro Platinum',
+      description: 'VIP investment with professional computing power',
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800',
       minAmount: 500000,
       maxAmount: 10000000,
       duration: '120 days',
       dailyReturns: '7%',
-      totalReturns: '840%',
-      category: 'Platinum'
+      totalReturns: 'UGX 4,700,000',
+      category: 'Platinum',
+      locked: true
     },
     {
       id: 6,
-      name: 'Apple Vision Diamond',
+      name: 'Apple Vision Pro Diamond',
       description: 'Ultimate investment in future technology',
-      image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/vision-pro-gallery-1-202401?wid=5120&hei=2880&fmt=p-jpg&qlt=80&.v=1706641489533',
+      image: 'https://images.unsplash.com/photo-1625842268584-8f3296236761?w=800',
       minAmount: 1000000,
       maxAmount: 50000000,
       duration: '180 days',
       dailyReturns: '10%',
-      totalReturns: '1800%',
-      category: 'Diamond'
+      totalReturns: 'UGX 19,000,000',
+      category: 'Diamond',
+      locked: true
     }
   ];
 
@@ -164,6 +170,7 @@ const Investments = () => {
       duration: selectedPackage.duration,
       totalDays: totalDays,
       status: 'active',
+      locked: selectedPackage.locked || false,
       createdAt: new Date().toISOString(),
       startDate: new Date().toISOString(),
       endDate: new Date(Date.now() + totalDays * 24 * 60 * 60 * 1000).toISOString()
@@ -309,7 +316,7 @@ const Investments = () => {
                       <p className="font-semibold text-green-700">{pkg.dailyReturns}</p>
                     </div>
                     <div className="bg-blue-50 rounded-lg p-3">
-                      <p className="text-xs text-blue-600">Total Returns</p>
+                      <p className="text-xs text-blue-600">Expected Payout</p>
                       <p className="font-semibold text-blue-700">{pkg.totalReturns}</p>
                     </div>
                   </div>
@@ -402,7 +409,7 @@ const Investments = () => {
                 <span className="font-medium text-green-600">{selectedPackage.dailyReturns}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Total Returns:</span>
+                <span className="text-gray-600">Expected Payout:</span>
                 <span className="font-medium text-blue-600">{selectedPackage.totalReturns}</span>
               </div>
               <div className="flex justify-between">

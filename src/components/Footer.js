@@ -21,10 +21,10 @@ const Footer = () => {
               Zenith Assets
             </h3>
             <p className="text-gray-400 mb-4">
-              Earn money watching videos and invite friends to earn even more with our 10% commission system.
+              Earn money watching videos,investing in top rated iphone products and invite friends to earn even more with our 10% commission system.
             </p>
             <div className="flex space-x-4">
-              <Link to="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+              <Link to="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
                 Join Now
               </Link>
               <Link to="/login" className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">

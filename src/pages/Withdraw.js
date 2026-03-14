@@ -53,6 +53,29 @@ const Withdraw = () => {
       return;
     }
 
+    // Check for locked funds from investments
+    const userPhone = user.phone;
+    const investments = JSON.parse(localStorage.getItem('investments_' + userPhone) || '[]');
+    const now = new Date().getTime();
+    
+    let lockedAmount = 0;
+    investments.forEach(inv => {
+      if (inv.locked && inv.status === 'active') {
+        const endDate = new Date(inv.endDate).getTime();
+        if (now < endDate) {
+          // Investment is still locked
+          lockedAmount += inv.amount;
+        }
+      }
+    });
+
+    const availableBalance = user.balance - lockedAmount;
+    if (amountValue > availableBalance) {
+      setError(`Insufficient available balance. You have UGX ${availableBalance.toLocaleString()} available for withdrawal (UGX ${lockedAmount.toLocaleString()} is locked in active investments).`);
+      setLoading(false);
+      return;
+    }
+
     try {
       const newBalance = user.balance - amountValue;
       await updateUserBalance(user.phone, newBalance, 'balance');
