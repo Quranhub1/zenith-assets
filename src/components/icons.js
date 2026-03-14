@@ -64,7 +64,7 @@ import {
   CloudArrowUpIcon,
   CloudArrowDownIcon,
   CodeBracketIcon,
-  TerminalIcon,
+  CommandLineIcon,
   CircleStackIcon,
   QuestionMarkCircleIcon,
   DocumentIcon,
@@ -86,6 +86,7 @@ const ArchiveIcon = ArchiveBoxIcon;
 const CursorClickIcon = CursorArrowRaysIcon;
 const CloudUploadIcon = CloudArrowUpIcon;
 const CloudDownloadIcon = CloudArrowDownIcon;
+const TerminalIcon = CommandLineIcon;
 const LocationMarkerIcon = MapPinIcon;
 const RefreshIcon = ArrowPathIcon;
 const SearchIcon = MagnifyingGlassIcon;
