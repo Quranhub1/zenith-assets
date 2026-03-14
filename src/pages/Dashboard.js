@@ -19,11 +19,11 @@ const Dashboard = () => {
     }
     
     setVideos([
-      { id: 1, title: 'How to Make Money Online', duration: '5:30', views: '1.2K', earnings: 500 },
-      { id: 2, title: 'Top 10 Investment Tips', duration: '3:45', views: '850', earnings: 300 },
-      { id: 3, title: 'Financial Freedom Guide', duration: '7:20', views: '2.1K', earnings: 800 },
-      { id: 4, title: 'Passive Income Ideas', duration: '4:15', views: '1.5K', earnings: 600 },
-      { id: 5, title: 'Stock Market Basics', duration: '6:00', views: '980', earnings: 400 }
+      { id: 1, title: 'How to Make Money Online', duration: '5:30', views: '1.2K', earnings: 500, url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+      { id: 2, title: 'Top 10 Investment Tips', duration: '3:45', views: '850', earnings: 300, url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+      { id: 3, title: 'Financial Freedom Guide', duration: '7:20', views: '2.1K', earnings: 800, url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+      { id: 4, title: 'Passive Income Ideas', duration: '4:15', views: '1.5K', earnings: 600, url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+      { id: 5, title: 'Stock Market Basics', duration: '6:00', views: '980', earnings: 400, url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
     ]);
     
     setLoading(false);
@@ -47,6 +47,12 @@ const Dashboard = () => {
   const handleWatchVideo = async (video) => {
     const earnings = video.earnings;
     
+    // Open YouTube video in new window
+    window.open(video.url, '_blank', 'width=800,height=600');
+    
+    // Show message that earnings will be credited after watching
+    alert(`Please watch the video! After watching, you'll earn UGX ${earnings}. The earnings will be added to your balance.`);
+    
     if (user) {
       const newBalance = user.balance + earnings;
       const updatedUser = { ...user, balance: newBalance };
@@ -61,12 +67,12 @@ const Dashboard = () => {
         });
         
         setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        localStorage.setItem('zenith_user', JSON.stringify(updatedUser));
         alert(`You earned UGX ${earnings}! Your new balance is UGX ${newBalance}`);
       } catch (error) {
         console.error("Error updating balance:", error);
         setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        localStorage.setItem('zenith_user', JSON.stringify(updatedUser));
         alert(`You earned UGX ${earnings}! Your new balance is UGX ${newBalance}`);
       }
     }
