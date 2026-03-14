@@ -126,6 +126,15 @@ const Dashboard = () => {
     const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
+      
+      // Validate user has phone number
+      if (!parsedUser.phone) {
+        console.error("User data missing phone number");
+        localStorage.removeItem('zenith_user');
+        window.location.href = '/login';
+        return;
+      }
+      
       setUser(parsedUser);
       fetchUserData(parsedUser.phone);
       

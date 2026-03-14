@@ -16,6 +16,14 @@ const Investments = () => {
     const storedUser = localStorage.getItem('zenith_user');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
+      
+      // Validate user has phone number
+      if (!parsedUser.phone) {
+        localStorage.removeItem('zenith_user');
+        navigate('/login');
+        return;
+      }
+      
       setUser(parsedUser);
       
       // Load user's investments

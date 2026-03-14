@@ -14,6 +14,14 @@ const Referrals = () => {
     const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
+      
+      // Validate user has phone number
+      if (!parsedUser.phone) {
+        localStorage.removeItem('zenith_user');
+        window.location.href = '/login';
+        return;
+      }
+      
       setUser(parsedUser);
       fetchReferrals(parsedUser.phone);
     } else {
