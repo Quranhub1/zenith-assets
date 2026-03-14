@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { getUser, createUser } from '../firebase';
+import { getUser, createUser, updateUserBalance } from '../firebase';
 
 const Register = () => {
   const [phone, setPhone] = useState('');
@@ -12,6 +12,15 @@ const Register = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Auto-fill referral code from URL
+  useEffect(() => {
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      setReferralCode(refCode);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const user = localStorage.getItem('user');
@@ -67,6 +76,7 @@ const Register = () => {
         balance: 0,
         commission: 0,
         referrals: 0,
+        referralCode: phone, // User's own referral code is their phone number
         referredBy: referrer ? referrer.phone : null,
         createdAt: new Date().toISOString()
       };
@@ -76,11 +86,12 @@ const Register = () => {
       if (result.success) {
         // If referred, update referrer's referrals count
         if (referrer) {
-          // This would be handled on the backend in production
+          const newReferralCount = (referrer.referrals || 0) + 1;
+          await updateUserBalance(referrer.phone, newReferralCount, 'referrals');
         }
         
         setSuccess('Account created successfully!');
-        localStorage.setItem('user', JSON.stringify(newUser));
+        localStorage.setItem('zenith_user', JSON.stringify(newUser));
         
         setTimeout(() => {
           navigate('/dashboard');
@@ -103,11 +114,12 @@ const Register = () => {
         balance: 0,
         commission: 0,
         referrals: 0,
+        referralCode: phone,
         referredBy: null,
         createdAt: new Date().toISOString()
       };
       localStorage.setItem('user_' + phone, JSON.stringify(newUser));
-      localStorage.setItem('user', JSON.stringify(newUser));
+      localStorage.setItem('zenith_user', JSON.stringify(newUser));
       setSuccess('Account created successfully!');
       setTimeout(() => {
         navigate('/dashboard');

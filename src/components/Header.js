@@ -10,7 +10,7 @@ const Header = () => {
   const [user, setUser] = React.useState(null);
   
   React.useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('zenith_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }

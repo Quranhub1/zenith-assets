@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('zenith_user');
     if (user) {
       const parsedUser = JSON.parse(user);
       // Redirect admin to admin dashboard, others to dashboard
@@ -43,7 +43,7 @@ const Login = () => {
       
       if (user) {
         if (user.password === password) {
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('zenith_user', JSON.stringify(user));
           navigate(redirectPath);
         } else {
           setError('Invalid phone number or password');
@@ -55,13 +55,14 @@ const Login = () => {
           balance: 0,
           commission: 0,
           referrals: 0,
+          referralCode: phone,
           referredBy: null,
           createdAt: new Date().toISOString()
         };
         
         const result = await createUser(newUser);
         if (result.success) {
-          localStorage.setItem('user', JSON.stringify(newUser));
+          localStorage.setItem('zenith_user', JSON.stringify(newUser));
           navigate(redirectPath);
         } else {
           setError('Login failed. Please try again.');
@@ -73,7 +74,7 @@ const Login = () => {
       if (storedUser) {
         const user = JSON.parse(storedUser);
         if (user.password === password) {
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('zenith_user', JSON.stringify(user));
           navigate(redirectPath);
         } else {
           setError('Invalid phone number or password');
@@ -85,11 +86,12 @@ const Login = () => {
           balance: 0,
           commission: 0,
           referrals: 0,
+          referralCode: phone,
           referredBy: null,
           createdAt: new Date().toISOString()
         };
         localStorage.setItem('user_' + phone, JSON.stringify(newUser));
-        localStorage.setItem('user', JSON.stringify(newUser));
+        localStorage.setItem('zenith_user', JSON.stringify(newUser));
         navigate(redirectPath);
       }
     }

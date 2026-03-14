@@ -11,7 +11,7 @@ const Referrals = () => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
@@ -108,6 +108,19 @@ const Referrals = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Your Referral Code</h2>
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 text-center">
+            <span className="text-3xl font-bold text-green-600">{user.phone}</span>
+            <p className="text-sm text-gray-600 mt-2">Share this code with friends</p>
+          </div>
+        </motion.div>
+
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

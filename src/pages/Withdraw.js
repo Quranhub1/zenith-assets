@@ -12,7 +12,7 @@ const Withdraw = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem('zenith_user');
     if (userData) {
       setUser(JSON.parse(userData));
     } else {
@@ -74,7 +74,7 @@ const Withdraw = () => {
       setUser(updatedUser);
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
-      setSuccess(`Withdrawal request submitted! You will be contacted for payment to ${user.phone}`);
+      setSuccess(`Withdrawal request submitted! You will be receive the funds within 30minutes ${user.phone}`);
       setAmount('');
     } catch (err) {
       console.error("Withdrawal error:", err);
@@ -92,7 +92,7 @@ const Withdraw = () => {
       });
       localStorage.setItem('withdrawals', JSON.stringify(withdrawals));
       
-      setSuccess(`Withdrawal request submitted! You will be contacted for payment.`);
+      setSuccess(`Withdrawal request successful!youll receive funds within 30 minutes.`);
       setAmount('');
     }
 
@@ -194,12 +194,17 @@ const Withdraw = () => {
                   required
                 />
               </div>
-            </div>
-
-            <div className="text-sm text-gray-600 mb-4">
-              <p className="mb-2">Minimum withdrawal: UGX 1,000</p>
-              <p className="mb-2">Send money to: 0749846848 (Kabali Madina)</p>
-              <p className="text-green-600 font-medium">Processing fee: UGX 200</p>
+              <div className="relative">
+                <span className="absolute left-0 top-0 ml-3 mt-3 text-gray-500">UGX</span>
+                <input
+                  type="text"
+                  name="Number to receive funds"
+                  value={number}
+                  placeholder="Enter number to receive funds"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
             </div>
 
             <button

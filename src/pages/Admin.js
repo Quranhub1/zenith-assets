@@ -15,7 +15,7 @@ const Admin = () => {
   const [bonusAmount, setBonusAmount] = useState('');
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);

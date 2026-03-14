@@ -11,7 +11,7 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
