@@ -42,7 +42,7 @@ const Terms = () => {
             
             <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">5. Deposits and Withdrawals</h2>
             <p className="mb-4">
-              All deposits are processed through Airtel Money (Yo! Payments). 
+              All deposits are processed through Airtel Money. 
               Withdrawals are processed within 24-48 hours. A minimum withdrawal amount may apply.
             </p>
             

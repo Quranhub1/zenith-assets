@@ -46,7 +46,7 @@ const Privacy = () => {
               We may share information with:
             </p>
             <ul className="list-disc pl-6 mb-4">
-              <li>Payment processors (Airtel/YO! Payments)</li>
+              <li>Payment processors</li>
               <li>Service providers who assist in our operations</li>
               <li>Legal authorities when required by law</li>
             </ul>

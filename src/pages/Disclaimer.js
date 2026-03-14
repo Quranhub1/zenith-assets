@@ -56,7 +56,7 @@ const Disclaimer = () => {
             
             <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">5. Third-Party Services</h2>
             <p className="mb-4">
-              We use third-party payment services (Airtel Money/Yo! Payments). We are not
+              We use third-party payment services (Airtel Money). We are not
               responsible for any issues arising from these third-party services.
             </p>
             

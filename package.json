@@ -1,7 +1,7 @@
 {
   "name": "zenith-assets",
   "version": "1.0.0",
-  "description": "Zenith Assets - Investment Platform with Yo! Payments (Airtel Uganda)",
+  "description": "Zenith Assets - Investment Platform",
   "engines": {
     "node": ">=14.0.0"
   },

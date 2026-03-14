@@ -20,11 +20,17 @@ function Deposit() {
       return;
     }
 
-    if (!amount || amount < 10000) {
-      alert('Minimum deposit is UGX 10,000');
+    // Show instructions when Deposit button is clicked
+    setShowInstructions(true);
+  };
+
+  const handleQuickDeposit = () => {
+    if (!user) {
+      alert('Please login first');
+      navigate('/login');
       return;
     }
-
+    // Show instructions directly
     setShowInstructions(true);
   };
 
@@ -47,50 +53,64 @@ function Deposit() {
           </div>
 
           {!showInstructions ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  value={phone || user?.phone || ''}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0749846848"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <p className="text-xs text-gray-500 mt-1">Your registered phone number</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Amount (UGX)
-                </label>
-                <input
-                  type="number"
-                  min="10000"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
-                />
-                <p className="text-xs text-gray-500 mt-1">Minimum: UGX 10,000</p>
-              </div>
-
+            <div className="space-y-6">
               <button
-                type="submit"
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold text-lg transition"
+                onClick={handleQuickDeposit}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold text-xl transition flex items-center justify-center gap-2"
               >
-                Get Deposit Funds
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Deposit
               </button>
-            </form>
+
+              <div className="text-center text-gray-500">or</div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone || user?.phone || ''}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="0749846848"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Your registered phone number</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Amount (UGX)
+                  </label>
+                  <input
+                    type="number"
+                    min="10000"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Minimum: UGX 10,000</p>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold text-lg transition"
+                >
+                  Get Deposit Instructions
+                </button>
+              </form>
+            </div>
           ) : (
             <div className="space-y-6">
               <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-green-900 mb-4">📱 Deposit Instructions</h3>
                 
                 <div className="space-y-3 text-green-800">
-                  <p><strong>Step 1:</strong> Send <strong>UGX {parseInt(amount || 0).toLocaleString()}</strong></p>
+                  <p><strong>Step 1:</strong> Send <strong>UGX {amount ? parseInt(amount).toLocaleString() : '10,000 or more'}</strong></p>
                   <p><strong>Step 2:</strong> To number: <strong>0749846848</strong></p>
                   <p><strong>Step 3:</strong> Network: <strong>Airtel Money</strong></p>
                   <hr className="border-green-300 my-2" />

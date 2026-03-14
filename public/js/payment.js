@@ -29,10 +29,6 @@ function initiateDeposit() {
     }
 }
 
-// Legacy function name for compatibility
-async function initiateYoPayment() {
-    initiateDeposit();
-}
 
 // Show toast notification
 function showToast(message) {
