@@ -48,11 +48,15 @@ const Admin = () => {
       const allDeposits = await getAllDeposits();
       const allWithdrawals = await getAllWithdrawals();
       
+      console.log('Fetched users:', allUsers);
+      
       // Normalize users - ensure each user has phone field (use id if phone is missing)
       const normalizedUsers = allUsers.map(user => ({
         ...user,
         phone: user.phone || user.id || 'Unknown'
       }));
+      
+      console.log('Normalized users:', normalizedUsers);
       
       setUsers(normalizedUsers);
       setDeposits(allDeposits);
@@ -158,6 +162,11 @@ const Admin = () => {
     try {
       switch (actionType) {
         case 'delete':
+          if (!selectedUser?.phone) {
+            alert('Invalid user selected');
+            setActionLoading(false);
+            return;
+          }
           if (confirm(`Are you sure you want to DELETE user ${selectedUser.phone}? This action cannot be undone.`)) {
             await deleteUser(selectedUser.phone);
             alert('User deleted successfully!');
