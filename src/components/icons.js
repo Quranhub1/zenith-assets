@@ -163,7 +163,7 @@ export {
   CloudUploadIcon,
   CloudDownloadIcon,
   CodeBracketIcon,
-  CodeIcon,
+  CodeBracketIcon,
   TerminalIcon,
   DatabaseIcon,
   CircleStackIcon,
