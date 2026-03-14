@@ -206,11 +206,11 @@ const Withdraw = () => {
                 name="receivePhone"
                 value={receivePhone}
                 onChange={(e) => setReceivePhone(e.target.value)}
-                placeholder="0749846848"
+                placeholder="Enter your phone number"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">Airtel Money number to receive funds</p>
+              <p className="text-xs text-gray-500 mt-1">Phone number to receive funds</p>
             </div>
 
             <button

@@ -4,27 +4,12 @@ import { motion } from 'framer-motion';
 
 function Deposit() {
   const navigate = useNavigate();
-  const [amount, setAmount] = useState('');
-  const [phone, setPhone] = useState('');
   const [showInstructions, setShowInstructions] = useState(false);
 
   // Get user from localStorage
   const user = JSON.parse(localStorage.getItem('zenith_user') || 'null');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!user) {
-      alert('Please login first');
-      navigate('/login');
-      return;
-    }
-
-    // Show instructions when Deposit button is clicked
-    setShowInstructions(true);
-  };
-
-  const handleQuickDeposit = () => {
+  const handleDeposit = () => {
     if (!user) {
       alert('Please login first');
       navigate('/login');
@@ -55,7 +40,7 @@ function Deposit() {
           {!showInstructions ? (
             <div className="space-y-6">
               <button
-                onClick={handleQuickDeposit}
+                onClick={handleDeposit}
                 className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold text-xl transition flex items-center justify-center gap-2"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,46 +48,6 @@ function Deposit() {
                 </svg>
                 Deposit
               </button>
-
-              <div className="text-center text-gray-500">or</div>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone || user?.phone || ''}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="0749846848"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Your registered phone number</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Amount (UGX)
-                  </label>
-                  <input
-                    type="number"
-                    min="10000"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Enter amount"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-lg"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Minimum: UGX 10,000</p>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold text-lg transition"
-                >
-                  Get Deposit Instructions
-                </button>
-              </form>
             </div>
           ) : (
             <div className="space-y-6">
@@ -110,12 +55,12 @@ function Deposit() {
                 <h3 className="text-lg font-semibold text-green-900 mb-4">📱 Deposit Instructions</h3>
                 
                 <div className="space-y-3 text-green-800">
-                  <p><strong>Step 1:</strong> Send <strong>UGX {amount ? parseInt(amount).toLocaleString() : '10,000 or more'}</strong></p>
-                  <p><strong>Step 2:</strong> To number: <strong>0749846848</strong></p>
-                  <p><strong>Step 3:</strong> Network: <strong>Airtel Money</strong></p>
+                  <p><strong>Step 1:</strong> Send any amount to:</p>
+                  <p className="text-xl font-bold">📱 0749846848</p>
+                  <p><strong>Step 2:</strong> Network: <strong>Airtel Money</strong></p>
                   <hr className="border-green-300 my-2" />
-                  <p className="text-sm"><strong>Step 4:</strong> After sending, contact admin with a screenshot of your deposit to confirm.</p>
-                  <p className="text-sm"><strong>Step 5:</strong> Your balance will be credited within 24 hours.</p>
+                  <p className="text-sm"><strong>Step 3:</strong> After sending, contact admin with a screenshot of your deposit to confirm.</p>
+                  <p className="text-sm"><strong>Step 4:</strong> Your balance will be credited within 24 hours.</p>
                 </div>
               </div>
 
@@ -134,7 +79,7 @@ function Deposit() {
                 onClick={() => setShowInstructions(false)}
                 className="w-full text-gray-600 hover:text-gray-800 py-2"
               >
-                ← Change Amount
+                ← Back
               </button>
             </div>
           )}

@@ -37,12 +37,12 @@ const Terms = () => {
             <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">4. Investment and Earnings</h2>
             <p className="mb-4">
               All investments are subject to risk. Past performance does not guarantee future results.
-              Earnings from referrals are paid at a rate of 20% of your referrer's deposits.
+              Earnings from referrals are paid at a rate of 10% of your referrer's deposits.
             </p>
             
             <h2 className="text-xl font-semibold text-gray-800 mt-6 mb-3">5. Deposits and Withdrawals</h2>
             <p className="mb-4">
-              All deposits are processed through Airtel Money. 
+              All deposits are processed through Mobile Money. 
               Withdrawals are processed within 24-48 hours. A minimum withdrawal amount may apply.
             </p>
             

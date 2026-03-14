@@ -262,7 +262,7 @@ const Dashboard = () => {
             <Link to="/referrals" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-lg transition">
               <UsersIcon className="w-8 h-8 text-blue-600 mb-2" />
               <h3 className="text-lg font-semibold text-gray-900">Refer Friends</h3>
-              <p className="text-sm text-gray-600">Earn 20% commission</p>
+              <p className="text-sm text-gray-600">Earn 10% commission</p>
             </Link>
             <Link to="/withdraw" className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-lg transition">
               <h3 className="text-lg font-semibold text-gray-900 mb-1">Withdraw</h3>
