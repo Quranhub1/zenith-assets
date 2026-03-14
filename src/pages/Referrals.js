@@ -32,7 +32,7 @@ const Referrals = () => {
         phone: u.phone,
         joined: new Date(u.createdAt).toLocaleDateString(),
         earnings: u.balance || 0,
-        commission: (u.balance || 0) * 0.2
+        commission: (u.balance || 0) * 0.1
       })));
     } catch (error) {
       console.error("Error fetching referrals:", error);
@@ -96,7 +96,7 @@ const Referrals = () => {
               <div className="text-sm text-gray-600">Referral Earnings</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">20%</div>
+              <div className="text-2xl font-bold text-purple-600">10%</div>
               <div className="text-sm text-gray-600">Commission Rate</div>
             </div>
             <div className="text-center">
@@ -146,7 +146,7 @@ const Referrals = () => {
               </button>
             </div>
             <p className="text-sm text-gray-600 mt-2">
-              Share this link with friends to earn 20% commission on their earnings
+              Share this link with friends to earn 10% commission on their deposits
             </p>
           </div>
         </motion.div>

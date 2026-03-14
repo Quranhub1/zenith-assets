@@ -40,8 +40,8 @@ const Withdraw = () => {
 
     const amountValue = parseFloat(amount);
     
-    if (amountValue < 1000) {
-      setError('Minimum withdrawal is UGX 1,000');
+    if (amountValue < 10000) {
+      setError('Minimum withdrawal is UGX 10,000');
       setLoading(false);
       return;
     }
