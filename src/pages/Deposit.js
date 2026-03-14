@@ -81,7 +81,7 @@ function Deposit() {
                 type="submit"
                 className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold text-lg transition"
               >
-                Get Deposit Instructions
+                Get Deposit Funds
               </button>
             </form>
           ) : (

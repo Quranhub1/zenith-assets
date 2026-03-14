@@ -5,12 +5,11 @@ const Footer = () => {
   const footerLinks = [
     { name: 'Home', path: '/' },
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Videos', path: '/videos' },
-    { name: 'Referral', path: '/referral' },
+    { name: 'Investments', path: '/investments' },
+    { name: 'Referrals', path: '/referrals' },
     { name: 'Withdraw', path: '/withdraw' },
-    { name: 'FAQ', path: '/faq' },
     { name: 'Terms', path: '/terms' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Privacy', path: '/privacy' },
   ];
 
   return (
