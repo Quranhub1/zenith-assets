@@ -41,8 +41,8 @@ import {
   UserGroupIcon,
   ChartBarIcon,
   NoSymbolIcon,
-  ThumbUpIcon,
-  ThumbDownIcon,
+  HandThumbUpIcon,
+  HandThumbDownIcon,
   EyeIcon,
   EyeSlashIcon,
   LockClosedIcon,
@@ -80,6 +80,8 @@ const CogIcon = Cog6ToothIcon;
 const MailIcon = EnvelopeIcon;
 const HelpCircle = QuestionMarkCircleIcon;
 const FileText = DocumentTextIcon;
+const ThumbUpIcon = HandThumbUpIcon;
+const ThumbDownIcon = HandThumbDownIcon;
 const LocationMarkerIcon = MapPinIcon;
 const RefreshIcon = ArrowPathIcon;
 const SearchIcon = MagnifyingGlassIcon;
