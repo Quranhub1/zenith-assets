@@ -9,8 +9,8 @@ function Deposit() {
   // Get user from localStorage
   const user = JSON.parse(localStorage.getItem('zenith_user') || 'null');
   
-  // Validate user has phone number
-  if (user && !user.phone) {
+  // Validate user has phone number (check both phone and id fields)
+  if (user && !user.phone && !user.id) {
     localStorage.removeItem('zenith_user');
     window.location.href = '/login';
   }

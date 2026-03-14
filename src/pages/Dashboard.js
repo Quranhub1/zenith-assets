@@ -128,21 +128,23 @@ const Dashboard = () => {
       const parsedUser = JSON.parse(userData);
       
       // Validate user has phone number
-      if (!parsedUser.phone) {
+      if (!parsedUser.phone && !parsedUser.id) {
         console.error("User data missing phone number");
         localStorage.removeItem('zenith_user');
         window.location.href = '/login';
         return;
       }
       
+      // Use phone or id as the user identifier
+      const userPhone = parsedUser.phone || parsedUser.id;
       setUser(parsedUser);
-      fetchUserData(parsedUser.phone);
+      fetchUserData(userPhone);
       
       // Load user investments from Firebase and localStorage
       const loadInvestments = async () => {
         try {
-          const firebaseInvestments = await getUserInvestments(parsedUser.phone);
-          const localInvestments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
+          const firebaseInvestments = await getUserInvestments(userPhone);
+          const localInvestments = JSON.parse(localStorage.getItem('investments_' + userPhone) || '[]');
           
           // Merge investments (prefer Firebase data if available, otherwise use local)
           const mergedInvestments = firebaseInvestments.length > 0 ? firebaseInvestments : localInvestments;
@@ -150,11 +152,11 @@ const Dashboard = () => {
           
           // Also save Firebase investments to localStorage for offline access
           if (firebaseInvestments.length > 0) {
-            localStorage.setItem('investments_' + parsedUser.phone, JSON.stringify(firebaseInvestments));
+            localStorage.setItem('investments_' + userPhone, JSON.stringify(firebaseInvestments));
           }
         } catch (error) {
           console.error('Error loading investments:', error);
-          const localInvestments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
+          const localInvestments = JSON.parse(localStorage.getItem('investments_' + userPhone) || '[]');
           setUserInvestments(localInvestments);
         }
       };

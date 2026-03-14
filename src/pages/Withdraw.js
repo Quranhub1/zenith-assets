@@ -17,15 +17,17 @@ const Withdraw = () => {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       
-      // Validate user has phone number
-      if (!parsedUser.phone) {
+      // Validate user has phone number (check both phone and id fields)
+      if (!parsedUser.phone && !parsedUser.id) {
         localStorage.removeItem('zenith_user');
         navigate('/login');
         return;
       }
       
+      const userPhone = parsedUser.phone || parsedUser.id;
+      
       // Fetch latest user data from Firebase
-      getUser(parsedUser.phone).then(firebaseUser => {
+      getUser(userPhone).then(firebaseUser => {
         if (firebaseUser) {
           setUser(firebaseUser);
           localStorage.setItem('zenith_user', JSON.stringify(firebaseUser));

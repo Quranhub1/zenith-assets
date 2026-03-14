@@ -14,9 +14,11 @@ const Login = () => {
     const user = localStorage.getItem('zenith_user');
     if (user) {
       const parsedUser = JSON.parse(user);
-      // Redirect admin to admin dashboard, others to dashboard (flexible matching)
-      const userPhone = parsedUser.phone || '';
-      if (userPhone.includes('749846848') || userPhone.includes('0749846848')) {
+      // Ensure phone field exists (it might be in id field from Firebase)
+      const userPhone = parsedUser.phone || parsedUser.id || '';
+      
+      // Redirect admin to admin dashboard, others to dashboard (strict matching)
+      if (userPhone === '256749846848') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
@@ -35,8 +37,8 @@ const Login = () => {
       return;
     }
 
-    // Check if admin (flexible matching - contains the number)
-    const isAdmin = phone.includes('749846848') || phone.includes('0749846848');
+    // Check if admin (strict matching - exact phone number)
+    const isAdmin = phone === '256749846848';
     const redirectPath = isAdmin ? '/admin' : '/dashboard';
 
     try {
@@ -44,7 +46,9 @@ const Login = () => {
       
       if (user) {
         if (user.password === password) {
-          localStorage.setItem('zenith_user', JSON.stringify(user));
+          // Ensure phone is saved in localStorage (it might be in id field from Firebase)
+          const userWithPhone = { ...user, phone: user.phone || user.id };
+          localStorage.setItem('zenith_user', JSON.stringify(userWithPhone));
           navigate(redirectPath);
         } else {
           setError('Invalid phone number or password');

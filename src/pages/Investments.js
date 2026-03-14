@@ -17,17 +17,18 @@ const Investments = () => {
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       
-      // Validate user has phone number
-      if (!parsedUser.phone) {
+      // Validate user has phone number (check both phone and id fields)
+      if (!parsedUser.phone && !parsedUser.id) {
         localStorage.removeItem('zenith_user');
         navigate('/login');
         return;
       }
       
+      const userPhone = parsedUser.phone || parsedUser.id;
       setUser(parsedUser);
       
       // Load user's investments
-      const investments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
+      const investments = JSON.parse(localStorage.getItem('investments_' + userPhone) || '[]');
       setUserInvestments(investments);
     } else {
       navigate('/login');
