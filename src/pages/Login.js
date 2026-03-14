@@ -14,9 +14,9 @@ const Login = () => {
     const user = localStorage.getItem('zenith_user');
     if (user) {
       const parsedUser = JSON.parse(user);
-      // Redirect admin to admin dashboard, others to dashboard (support multiple formats)
-      const adminNumbers = ['0749846848', '256749846848', '+256749846848'];
-      if (adminNumbers.includes(parsedUser.phone)) {
+      // Redirect admin to admin dashboard, others to dashboard (flexible matching)
+      const userPhone = parsedUser.phone || '';
+      if (userPhone.includes('749846848') || userPhone.includes('0749846848')) {
         navigate('/admin');
       } else {
         navigate('/dashboard');
@@ -35,9 +35,8 @@ const Login = () => {
       return;
     }
 
-    // Check if admin (support multiple formats)
-    const adminNumbers = ['0749846848', '256749846848', '+256749846848'];
-    const isAdmin = adminNumbers.includes(phone);
+    // Check if admin (flexible matching - contains the number)
+    const isAdmin = phone.includes('749846848') || phone.includes('0749846848');
     const redirectPath = isAdmin ? '/admin' : '/dashboard';
 
     try {

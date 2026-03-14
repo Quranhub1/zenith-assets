@@ -26,10 +26,12 @@ const Admin = () => {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
       
-      // Only allow admin access (support multiple formats)
-      const adminNumbers = ['0749846848', '256749846848', '+256749846848'];
-      if (!adminNumbers.includes(parsedUser.phone)) {
-        alert('Access denied. Admin only.');
+      // Check if user phone contains admin number (flexible matching)
+      const userPhone = parsedUser.phone || '';
+      const isAdmin = userPhone.includes('749846848') || userPhone.includes('0749846848');
+      
+      if (!isAdmin) {
+        alert('Access denied. Admin only. Your number: ' + userPhone);
         window.location.href = '/dashboard';
         return;
       }
