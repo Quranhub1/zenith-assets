@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { addInvestment, addTransaction, updateUserBalance } from '../firebase';
 
 const Investments = () => {
   const [user, setUser] = useState(null);
@@ -181,6 +182,20 @@ const Investments = () => {
     const investments = JSON.parse(localStorage.getItem('investments_' + user.phone) || '[]');
     investments.push(investment);
     localStorage.setItem('investments_' + user.phone, JSON.stringify(investments));
+    
+    // Save to Firebase
+    try {
+      await addInvestment(investment);
+      await addTransaction({
+        userId: user.phone,
+        type: 'investment',
+        amount: amount,
+        description: `Investment in ${selectedPackage.name}`
+      });
+      await updateUserBalance(user.phone, newBalance, 'balance');
+    } catch (error) {
+      console.error('Error saving to Firebase:', error);
+    }
     
     // Update user investments state
     setUserInvestments(investments);

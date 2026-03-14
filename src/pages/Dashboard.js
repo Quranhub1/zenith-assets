@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PlayIcon, UsersIcon } from '../components/icons';
-import { getUser, updateUserBalance, addTransaction, getUserTransactions, getAllUsers } from '../firebase';
+import { getUser, updateUserBalance, addTransaction, getUserTransactions, getAllUsers, getUserInvestments, addInvestment } from '../firebase';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -18,7 +18,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!user) return;
 
-    const checkInvestments = () => {
+    const checkInvestments = async () => {
       const userPhone = user.phone;
       const investments = JSON.parse(localStorage.getItem('investments_' + userPhone) || '[]');
       const now = Date.now();
@@ -84,6 +84,15 @@ const Dashboard = () => {
       // Save updated investments
       localStorage.setItem('investments_' + userPhone, JSON.stringify(updatedInvestments));
 
+      // Also save to Firebase
+      try {
+        for (const inv of updatedInvestments) {
+          await addInvestment(inv);
+        }
+      } catch (error) {
+        console.error('Error saving investments to Firebase:', error);
+      }
+
       // Update balance if changed
       if (balanceChanged) {
         const updatedUser = { ...user, balance: newBalance };
@@ -120,9 +129,27 @@ const Dashboard = () => {
       setUser(parsedUser);
       fetchUserData(parsedUser.phone);
       
-      // Load user investments from localStorage
-      const storedInvestments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
-      setUserInvestments(storedInvestments);
+      // Load user investments from Firebase and localStorage
+      const loadInvestments = async () => {
+        try {
+          const firebaseInvestments = await getUserInvestments(parsedUser.phone);
+          const localInvestments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
+          
+          // Merge investments (prefer Firebase data if available, otherwise use local)
+          const mergedInvestments = firebaseInvestments.length > 0 ? firebaseInvestments : localInvestments;
+          setUserInvestments(mergedInvestments);
+          
+          // Also save Firebase investments to localStorage for offline access
+          if (firebaseInvestments.length > 0) {
+            localStorage.setItem('investments_' + parsedUser.phone, JSON.stringify(firebaseInvestments));
+          }
+        } catch (error) {
+          console.error('Error loading investments:', error);
+          const localInvestments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
+          setUserInvestments(localInvestments);
+        }
+      };
+      loadInvestments();
       
       // Check if user can watch video (48 hour cooldown)
       checkVideoCooldown(parsedUser);
