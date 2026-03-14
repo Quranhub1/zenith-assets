@@ -31,6 +31,10 @@ const Header = () => {
     { name: 'Referrals', path: '/referrals' },
   ];
 
+  // Add admin link if user is admin
+  const isAdmin = user?.phone === '0749846848';
+  const allLinks = isAdmin ? [...navLinks, { name: 'Admin', path: '/admin' }] : navLinks;
+
   const isActive = (path) => {
     return location.pathname === path;
   };
@@ -48,7 +52,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            {navLinks.map((link) => (
+            {allLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
@@ -115,7 +119,7 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
-            {navLinks.map((link) => (
+            {allLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.path}
