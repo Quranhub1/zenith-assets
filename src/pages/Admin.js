@@ -28,7 +28,7 @@ const Admin = () => {
       
       // Check if user phone contains admin number (flexible matching)
       const userPhone = parsedUser.phone || '';
-      const isAdmin = userPhone.includes('749846848') || userPhone.includes('0749846848');
+      const isAdmin = userPhone.includes('749846848') || userPhone.includes('0749846848') || userPhone.includes('+256749846848') || userPhone.includes('256749846848');
       
       if (!isAdmin) {
         alert('Access denied. Admin only. Your number: ' + userPhone);

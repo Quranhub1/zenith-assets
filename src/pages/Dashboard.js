@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [canWatch, setCanWatch] = useState(true);
   const [cooldownRemaining, setCooldownRemaining] = useState('');
   const [investmentTimers, setInvestmentTimers] = useState({});
+  const [userInvestments, setUserInvestments] = useState([]);
 
   // Investment timer effect - runs every minute
   useEffect(() => {
@@ -101,6 +102,7 @@ const Dashboard = () => {
         }
       });
       setInvestmentTimers(timers);
+      setUserInvestments(updatedInvestments);
     };
 
     // Run immediately
@@ -117,6 +119,10 @@ const Dashboard = () => {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
       fetchUserData(parsedUser.phone);
+      
+      // Load user investments from localStorage
+      const storedInvestments = JSON.parse(localStorage.getItem('investments_' + parsedUser.phone) || '[]');
+      setUserInvestments(storedInvestments);
       
       // Check if user can watch video (48 hour cooldown)
       checkVideoCooldown(parsedUser);

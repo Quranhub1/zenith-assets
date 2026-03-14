@@ -33,7 +33,7 @@ const Header = () => {
 
   // Add admin link if user is admin (flexible matching)
   const userPhone = user?.phone || '';
-  const isAdmin = userPhone.includes('749846848') || userPhone.includes('0749846848');
+  const isAdmin = userPhone.includes('749846848') || userPhone.includes('0749846848') || userPhone.includes('+256749846848') || userPhone.includes('256749846848');
   const allLinks = isAdmin ? [...navLinks, { name: 'Admin', path: '/admin' }] : navLinks;
 
   const isActive = (path) => {
