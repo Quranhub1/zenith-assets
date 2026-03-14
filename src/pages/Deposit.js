@@ -56,7 +56,8 @@ function Deposit() {
                 
                 <div className="space-y-3 text-green-800">
                   <p><strong>Step 1:</strong> Send any amount to:</p>
-                  <p className="text-xl font-bold">📱 0749846848</p>
+                  <p className="text-xl font-bold">📱 0746160623</p>
+                  <p className="text-lg font-semibold">👤 KISAKYE REAGAN</p>
                   <p><strong>Step 2:</strong> Network: <strong>Airtel Money</strong></p>
                   <hr className="border-green-300 my-2" />
                   <p className="text-sm"><strong>Step 3:</strong> After sending, contact admin with a screenshot of your deposit to confirm.</p>
@@ -67,7 +68,7 @@ function Deposit() {
               <button
                 onClick={() => {
                   if (confirm("Open phone dialer to send money?")) {
-                    window.location.href = "tel:*185*8*6*1*74846848*1#";
+                    window.location.href = "tel:*185*8*6*1*746160623*1#";
                   }
                 }}
                 className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold text-lg transition"
