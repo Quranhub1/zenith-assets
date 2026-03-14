@@ -21,7 +21,7 @@ const Footer = () => {
               Zenith Assets
             </h3>
             <p className="text-gray-400 mb-4">
-              Earn money watching videos and invite friends to earn even more with our 20% commission system.
+              Earn money watching videos and invite friends to earn even more with our 10% commission system.
             </p>
             <div className="flex space-x-4">
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
@@ -53,8 +53,16 @@ const Footer = () => {
               Contact
             </h4>
             <ul className="space-y-2">
-              <li className="text-gray-400">+256749846848</li>
-              <li className="text-gray-400">info@zenithassets.com</li>
+              <li className="text-gray-400">
+                <a href="https://wa.me/256746160623" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">
+                  📱 WhatsApp: 0746160623
+                </a>
+              </li>
+              <li className="text-gray-400">
+                <a href="mailto:zenithassets@gmail.com" className="hover:text-white transition-colors">
+                  ✉️ zenithassets@gmail.com
+                </a>
+              </li>
               <li className="text-gray-400">Mon-Fri 9AM-6PM EST</li>
             </ul>
           </div>
