@@ -84,8 +84,10 @@ const Dashboard = () => {
       const updatedUser = { ...user, balance: newBalance, lastVideoWatch: now };
       
       try {
+        const newVideosWatched = (user.videosWatched || 0) + 1;
         await updateUserBalance(user.phone, newBalance, 'balance');
         await updateUserBalance(user.phone, now, 'lastVideoWatch');
+        await updateUserBalance(user.phone, newVideosWatched, 'videosWatched');
         await addTransaction({
           userId: user.phone,
           type: 'earnings',
@@ -93,15 +95,16 @@ const Dashboard = () => {
           description: `Video watch earnings: ${video.title}`
         });
         
-        setUser(updatedUser);
-        localStorage.setItem('zenith_user', JSON.stringify(updatedUser));
+        setUser({...updatedUser, videosWatched: newVideosWatched});
+        localStorage.setItem('zenith_user', JSON.stringify({...updatedUser, videosWatched: newVideosWatched}));
         setCanWatch(false);
         setCooldownRemaining('48 hours');
         alert(`You earned UGX ${earnings}! You can watch another video in 48 hours. Your new balance is UGX ${newBalance}`);
       } catch (error) {
         console.error("Error updating balance:", error);
-        setUser(updatedUser);
-        localStorage.setItem('zenith_user', JSON.stringify(updatedUser));
+        const newVideosWatched = (user.videosWatched || 0) + 1;
+        setUser({...updatedUser, videosWatched: newVideosWatched});
+        localStorage.setItem('zenith_user', JSON.stringify({...updatedUser, videosWatched: newVideosWatched}));
         setCanWatch(false);
         setCooldownRemaining('48 hours');
         alert(`You earned UGX ${earnings}! You can watch another video in 48 hours. Your new balance is UGX ${newBalance}`);
@@ -141,7 +144,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 py-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">UGX {user.balance?.toLocaleString() || 0}</div>
               <div className="text-sm text-gray-600">Total Balance</div>
@@ -155,7 +158,11 @@ const Dashboard = () => {
               <div className="text-sm text-gray-600">Total Referrals</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">UGX {((user.balance || 0) + (user.commission || 0)).toLocaleString()}</div>
+              <div className="text-2xl font-bold text-orange-600">{user.videosWatched || 0}</div>
+              <div className="text-sm text-gray-600">Videos Watched</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">UGX {((user.balance || 0) + (user.commission || 0)).toLocaleString()}</div>
               <div className="text-sm text-gray-600">Total Earnings</div>
             </div>
           </div>

@@ -76,6 +76,7 @@ const Register = () => {
         balance: 0,
         commission: 0,
         referrals: 0,
+        videosWatched: 0,
         referralCode: phone, // User's own referral code is their phone number
         referredBy: referrer ? referrer.phone : null,
         createdAt: new Date().toISOString()
@@ -114,6 +115,7 @@ const Register = () => {
         balance: 0,
         commission: 0,
         referrals: 0,
+        videosWatched: 0,
         referralCode: phone,
         referredBy: null,
         createdAt: new Date().toISOString()
