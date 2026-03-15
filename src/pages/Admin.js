@@ -111,27 +111,31 @@ const Admin = () => {
     try {
       // Use the pre-initialized Firestore instance
       // db is exported from firebase.js
-      // Use the pre-initialized Firestore instance
-      // db is exported from firebase.js
       
       // Set up real-time listener for users
-      const usersQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/users"));
-      const usersUnsubscribe = onSnapshot(usersQuery, (snapshot) => {
-        console.log('Users snapshot received, docs:', snapshot.size);
-        const usersList = [];
-        snapshot.forEach((doc) => {
-          usersList.push({ id: doc.id, ...doc.data() });
+      const usersCollectionPath = "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/users";
+      console.log('Querying users from:', usersCollectionPath);
+      const usersQuery = query(collection(db, usersCollectionPath));
+      const usersUnsubscribe = onSnapshot(usersQuery, 
+        (snapshot) => {
+          console.log('Users snapshot received, docs:', snapshot.size);
+          const usersList = [];
+          snapshot.forEach((doc) => {
+            usersList.push({ id: doc.id, ...doc.data() });
+          });
+          
+          // Normalize users - ensure each user has phone field (use id if phone is missing)
+          const normalizedUsers = usersList.map(user => ({
+            ...user,
+            phone: user.phone || user.id || 'Unknown'
+          }));
+          
+          setUsers(normalizedUsers);
+          console.log('Real-time users update:', normalizedUsers.length);
+        },
+        (error) => {
+          console.error('Error listening to users:', error);
         });
-        
-        // Normalize users - ensure each user has phone field (use id if phone is missing)
-        const normalizedUsers = usersList.map(user => ({
-          ...user,
-          phone: user.phone || user.id || 'Unknown'
-        }));
-        
-        setUsers(normalizedUsers);
-        console.log('Real-time users update:', normalizedUsers.length);
-      });
       setUsersUnsubscribe(usersUnsubscribe);
       
       // Set up real-time listener for deposits
