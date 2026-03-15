@@ -42,11 +42,11 @@ const Investments = () => {
       name: 'Starter Pack',
       description: 'Start your investment journey with quick returns',
       image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=800',
-      minAmount: 50000,
+      minAmount: 20000,
       maxAmount: 200000,
       duration: '21 days',
       dailyReturns: '7%',
-      totalReturns: 'UGX 73,500',
+      totalReturns: 'UGX 30,870',
       category: 'Starter',
       locked: false
     },
