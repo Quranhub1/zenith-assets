@@ -46,6 +46,7 @@ const Admin = () => {
   const [investmentsUnsubscribe, setInvestmentsUnsubscribe] = useState(null);
 
   useEffect(() => {
+    console.log('Admin useEffect running');
     const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
@@ -116,6 +117,7 @@ const Admin = () => {
       // Set up real-time listener for users
       const usersQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/users"));
       const usersUnsubscribe = onSnapshot(usersQuery, (snapshot) => {
+        console.log('Users snapshot received, docs:', snapshot.size);
         const usersList = [];
         snapshot.forEach((doc) => {
           usersList.push({ id: doc.id, ...doc.data() });
@@ -168,6 +170,8 @@ const Admin = () => {
       });
       setInvestmentsUnsubscribe(investmentsUnsubscribe);
       
+      console.log('Real-time listeners set up successfully');
+      setLoading(false);
     } catch (error) {
       console.error("Error setting up real-time listeners:", error);
       console.log("Falling back to fetchData()...");
