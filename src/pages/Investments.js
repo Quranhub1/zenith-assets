@@ -165,11 +165,13 @@ const Investments = () => {
     const dailyEarnings = amount * dailyReturnRate;
     const totalDays = parseInt(selectedPackage.duration);
     const expectedReturn = amount + (dailyEarnings * totalDays);
+    const userPhone = user.phone || user.id;
+    const newBalance = user.balance - amount;
 
     // Create investment record
     const investment = {
       id: Date.now(),
-      userId: user.phone || user.id,
+      userId: userPhone,
       packageId: selectedPackage.id,
       packageName: selectedPackage.name,
       amount: amount,
@@ -188,7 +190,6 @@ const Investments = () => {
     };
 
     // Save to local storage
-    const userPhone = user.phone || user.id;
     const investments = JSON.parse(localStorage.getItem('investments_' + userPhone) || '[]');
     investments.push(investment);
     localStorage.setItem('investments_' + userPhone, JSON.stringify(investments));
@@ -197,7 +198,7 @@ const Investments = () => {
     try {
       await addInvestment(investment);
       await addTransaction({
-        userId: user.phone,
+        userId: userPhone,
         type: 'investment',
         amount: amount,
         description: `Investment in ${selectedPackage.name}`
@@ -211,7 +212,6 @@ const Investments = () => {
     setUserInvestments(investments);
 
     // Update user balance
-    const newBalance = user.balance - amount;
     user.balance = newBalance;
     localStorage.setItem('zenith_user', JSON.stringify(user));
 
