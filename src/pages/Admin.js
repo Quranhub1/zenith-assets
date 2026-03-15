@@ -86,10 +86,12 @@ const Admin = () => {
       const allUsers = await getAllUsers();
       const allDeposits = await getAllDeposits();
       const allWithdrawals = await getAllWithdrawals();
+      const allInvestments = await getAllInvestments();
       
       console.log('Fetched users:', allUsers);
       console.log('Fetched deposits:', allDeposits);
       console.log('Fetched withdrawals:', allWithdrawals);
+      console.log('Fetched investments:', allInvestments);
       
       // Normalize users - ensure each user has phone field (use id if phone is missing)
       const normalizedUsers = allUsers.map(user => ({
@@ -102,6 +104,7 @@ const Admin = () => {
       setUsers(normalizedUsers);
       setDeposits(allDeposits);
       setWithdrawals(allWithdrawals);
+      setInvestments(allInvestments);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
