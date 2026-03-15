@@ -63,6 +63,9 @@ const Admin = () => {
       
       // Set up real-time listeners
       setupRealTimeListeners();
+      
+      // Also fetch data as fallback
+      fetchData();
     } else {
       window.location.href = '/login';
     }
