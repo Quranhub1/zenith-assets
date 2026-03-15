@@ -239,7 +239,7 @@ const Investments = () => {
             </p>
             <div className="flex justify-center gap-4 flex-wrap">
               <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3">
-                <p className="text-2xl font-bold">UGX 20K</p>
+                <p className="text-2xl font-bold">UGX 20,000</p>
                 <p className="text-sm text-blue-200">Minimum</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3">
@@ -330,7 +330,7 @@ const Investments = () => {
                     <div className="bg-gray-50 rounded-lg p-3">
                       <p className="text-xs text-gray-500">Min - Max</p>
                       <p className="font-semibold text-sm">
-                        {pkg.minAmount.toLocaleString()} - {(pkg.maxAmount / 1000).toFixed(0)}K
+                        UGX {pkg.minAmount.toLocaleString()} - UGX {pkg.maxAmount.toLocaleString()}
                       </p>
                     </div>
                     <div className="bg-gray-50 rounded-lg p-3">
