@@ -79,11 +79,14 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
+      console.log('Fetching data...');
       const allUsers = await getAllUsers();
       const allDeposits = await getAllDeposits();
       const allWithdrawals = await getAllWithdrawals();
       
       console.log('Fetched users:', allUsers);
+      console.log('Fetched deposits:', allDeposits);
+      console.log('Fetched withdrawals:', allWithdrawals);
       
       // Normalize users - ensure each user has phone field (use id if phone is missing)
       const normalizedUsers = allUsers.map(user => ({
@@ -103,7 +106,10 @@ const Admin = () => {
   };
 
   const setupRealTimeListeners = () => {
+    console.log('Setting up real-time listeners, db type:', typeof db, ', db:', db);
     try {
+      // Use the pre-initialized Firestore instance
+      // db is exported from firebase.js
       // Use the pre-initialized Firestore instance
       // db is exported from firebase.js
       
@@ -164,6 +170,7 @@ const Admin = () => {
       
     } catch (error) {
       console.error("Error setting up real-time listeners:", error);
+      console.log("Falling back to fetchData()...");
       // Fallback to periodic fetching if real-time fails
       fetchData();
       setLoading(false);
