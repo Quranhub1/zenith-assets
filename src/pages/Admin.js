@@ -19,8 +19,7 @@ import {
   addTransaction, 
   deleteUser, 
   banUser, 
-  updateUserData,
-  createUser
+  updateUserData
 } from '../firebase';
 
 const Admin = () => {
@@ -33,7 +32,6 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('users');
   const [selectedUser, setSelectedUser] = useState(null);
   const [bonusAmount, setBonusAmount] = useState('');
-  const [migrating, setMigrating] = useState(false);
   
   // Action modal states
   const [showActionModal, setShowActionModal] = useState(false);
@@ -48,7 +46,6 @@ const Admin = () => {
   const [investmentsUnsubscribe, setInvestmentsUnsubscribe] = useState(null);
 
   useEffect(() => {
-    console.log('Admin useEffect running');
     const userData = localStorage.getItem('zenith_user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
@@ -109,35 +106,27 @@ const Admin = () => {
   };
 
   const setupRealTimeListeners = () => {
-    console.log('Setting up real-time listeners, db type:', typeof db, ', db:', db);
     try {
       // Use the pre-initialized Firestore instance
       // db is exported from firebase.js
       
       // Set up real-time listener for users
       const usersCollectionPath = "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/users";
-      console.log('Querying users from:', usersCollectionPath);
       const usersQuery = query(collection(db, usersCollectionPath));
-      const usersUnsubscribe = onSnapshot(usersQuery, 
-        (snapshot) => {
-          console.log('Users snapshot received, docs:', snapshot.size);
-          const usersList = [];
-          snapshot.forEach((doc) => {
-            usersList.push({ id: doc.id, ...doc.data() });
-          });
-          
-          // Normalize users - ensure each user has phone field (use id if phone is missing)
-          const normalizedUsers = usersList.map(user => ({
-            ...user,
-            phone: user.phone || user.id || 'Unknown'
-          }));
-          
-          setUsers(normalizedUsers);
-          console.log('Real-time users update:', normalizedUsers.length);
-        },
-        (error) => {
-          console.error('Error listening to users:', error);
+      const usersUnsubscribe = onSnapshot(usersQuery, (snapshot) => {
+        const usersList = [];
+        snapshot.forEach((doc) => {
+          usersList.push({ id: doc.id, ...doc.data() });
         });
+        
+        // Normalize users - ensure each user has phone field (use id if phone is missing)
+        const normalizedUsers = usersList.map(user => ({
+          ...user,
+          phone: user.phone || user.id || 'Unknown'
+        }));
+        
+        setUsers(normalizedUsers);
+      });
       setUsersUnsubscribe(usersUnsubscribe);
       
       // Set up real-time listener for deposits
@@ -238,36 +227,6 @@ const Admin = () => {
     } catch (error) {
       console.error("Error rejecting withdrawal:", error);
     }
-  };
-
-  // Migrate users from localStorage to Firebase
-  const migrateFromLocalStorage = async () => {
-    setMigrating(true);
-    try {
-      let migratedCount = 0;
-      // Get all keys from localStorage
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('user_')) {
-          const userData = localStorage.getItem(key);
-          if (userData) {
-            const user = JSON.parse(userData);
-            if (user.phone) {
-              console.log('Migrating user:', user.phone);
-              await createUser(user);
-              migratedCount++;
-            }
-          }
-        }
-      }
-      alert(`Migration complete! ${migratedCount} users migrated to Firebase.`);
-      // Refresh data
-      fetchData();
-    } catch (error) {
-      console.error('Migration error:', error);
-      alert('Migration failed: ' + error.message);
-    }
-    setMigrating(false);
   };
 
   const handleAddBonus = async () => {
@@ -460,16 +419,7 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={migrateFromLocalStorage} 
-                disabled={migrating}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm font-semibold disabled:opacity-50"
-              >
-                {migrating ? 'Migrating...' : 'Migrate from LocalStorage'}
-              </button>
-              <Link to="/dashboard" className="text-blue-600 hover:underline">Back to Dashboard</Link>
-            </div>
+            <Link to="/dashboard" className="text-blue-600 hover:underline">Back to Dashboard</Link>
           </div>
         </div>
       </div>
