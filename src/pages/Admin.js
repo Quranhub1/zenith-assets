@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UsersIcon, DollarSignIcon, TrendingUpIcon, TrendingDownIcon, CheckIcon, XIcon, TrashIcon, NoSymbolIcon, PencilIcon, UserIcon } from '../components/icons';
 import { 
-  getFirestore,
+  db,
   collection,
   query,
   onSnapshot,
@@ -104,8 +104,8 @@ const Admin = () => {
 
   const setupRealTimeListeners = () => {
     try {
-      // Get Firestore instance
-      const db = getFirestore();
+      // Use the pre-initialized Firestore instance
+      // db is exported from firebase.js
       
       // Set up real-time listener for users
       const usersQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/users"));
