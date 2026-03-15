@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UsersIcon, DollarSignIcon, TrendingUpIcon, TrendingDownIcon, CheckIcon, XIcon, TrashIcon, NoSymbolIcon, PencilIcon, UserIcon } from '../components/icons';
 import { 
+  getFirestore,
+  collection,
+  query,
+  onSnapshot,
   getAllUsers, 
   getAllDeposits, 
   getAllWithdrawals,
@@ -15,11 +19,7 @@ import {
   addTransaction, 
   deleteUser, 
   banUser, 
-  updateUserData,
-  getFirestore,
-  collection,
-  onSnapshot,
-  query
+  updateUserData
 } from '../firebase';
 
 const Admin = () => {

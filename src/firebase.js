@@ -60,6 +60,9 @@ try {
   auth = {};
 }
 
+// Export Firestore functions for use in other modules
+export { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, onSnapshot };
+
 // Database References
 const ZENITH_RESOURCES = "ZENITH RESOURCES";
 const Smjhzh926ep3xwRBGzcR = "Smjhzh926ep3xwRBGzcR";
