@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UsersIcon, DollarSignIcon, TrendingUpIcon, TrendingDownIcon, CheckIcon, XIcon, TrashIcon, NoSymbolIcon, PencilIcon, UserIcon } from '../components/icons';
+import { UsersIcon, DollarSignIcon, TrendingUpIcon, TrendingDownIcon, CheckIcon, XIcon, TrashIcon, NoSymbolIcon, PencilIcon, UserIcon, CheckCircleIcon, XCircleIcon } from '../components/icons';
 import { 
   db,
   collection,
@@ -655,7 +655,8 @@ const Admin = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{inv.plan || 'N/A'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">UGX {inv.returns?.toLocaleString() || 0}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs rounded ${inv.status === 'active' ? 'bg-green-100 text-green-800' : inv.status === 'completed' ? 'bg-blue-100 text-blue-800' : inv.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                        <span className={`px-2 py-1 text-xs rounded flex items-center gap-1 w-fit ${inv.status === 'active' ? 'bg-green-100 text-green-800' : inv.status === 'completed' ? 'bg-blue-100 text-blue-800' : inv.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {inv.status === 'completed' && <CheckCircleIcon className="w-4 h-4 text-green-600" />}
                           {inv.status}
                         </span>
                       </td>
@@ -667,8 +668,8 @@ const Admin = () => {
                               <button onClick={() => handleUpdateInvestment(inv)} className="text-blue-600 hover:text-blue-800">
                                 <PencilIcon className="w-5 h-5" />
                               </button>
-                              <button onClick={() => handleStopInvestment(inv)} className="text-orange-600 hover:text-orange-800">
-                                <NoSymbolIcon className="w-5 h-5" />
+                              <button onClick={() => handleStopInvestment(inv)} className="text-red-600 hover:text-red-800">
+                                <XCircleIcon className="w-5 h-5" />
                               </button>
                             </>
                           )}
