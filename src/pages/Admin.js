@@ -45,6 +45,10 @@ const Admin = () => {
   const [withdrawalsUnsubscribe, setWithdrawalsUnsubscribe] = useState(null);
   const [investmentsUnsubscribe, setInvestmentsUnsubscribe] = useState(null);
 
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
   useEffect(() => {
     const userData = localStorage.getItem('zenith_user');
     if (userData) {
@@ -373,8 +377,10 @@ const Admin = () => {
 
   const handleStopInvestment = async (investment) => {
     try {
-      await updateInvestment(investment.id, { status: 'cancelled' });
-      alert('Investment stopped successfully!');
+      if (confirm(`Are you sure you want to STOP this investment for ${investment.userId}? This action cannot be undone.`)) {
+        await updateInvestment(investment.id, { status: 'cancelled' });
+        alert('Investment stopped successfully!');
+      }
     } catch (error) {
       console.error("Error stopping investment:", error);
       alert('Error stopping investment');
@@ -489,6 +495,34 @@ const Admin = () => {
           </button>
         </div>
 
+        {/* Search and Filter */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <div className="flex-1 min-w-[200px]">
+            <input
+              type="text"
+              placeholder="Search by phone, ID, or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="min-w-[150px]">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="rejected">Rejected</option>
+              <option value="banned">Banned</option>
+            </select>
+          </div>
+        </div>
+
         {/* Users Table */}
         {activeTab === 'users' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -506,7 +540,15 @@ const Admin = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {users.map((u) => (
+                  {users.filter(u => {
+                    const matchesSearch = !searchQuery || 
+                      (u.phone && u.phone.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                      (u.email && u.email.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const matchesStatus = statusFilter === 'all' || 
+                      (statusFilter === 'banned' && u.banned) ||
+                      (statusFilter === 'active' && !u.banned);
+                    return matchesSearch && matchesStatus;
+                  }).map((u) => (
                     <tr 
                       key={u.id} 
                       className={`hover:bg-gray-50 cursor-pointer ${selectedUser?.phone === u.phone ? 'bg-blue-50' : ''}`}
@@ -554,7 +596,12 @@ const Admin = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {deposits.map((d) => (
+                  {deposits.filter(d => {
+                    const matchesSearch = !searchQuery || 
+                      (d.userId && d.userId.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const matchesStatus = statusFilter === 'all' || d.status === statusFilter;
+                    return matchesSearch && matchesStatus;
+                  }).map((d) => (
                     <tr key={d.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{d.userId}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">UGX {d.amount?.toLocaleString()}</td>
@@ -600,7 +647,13 @@ const Admin = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {withdrawals.map((w) => (
+                  {withdrawals.filter(w => {
+                    const matchesSearch = !searchQuery || 
+                      (w.userId && w.userId.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                      (w.phone && w.phone.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const matchesStatus = statusFilter === 'all' || w.status === statusFilter;
+                    return matchesSearch && matchesStatus;
+                  }).map((w) => (
                     <tr key={w.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{w.userId}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">UGX {w.amount?.toLocaleString()}</td>
@@ -648,7 +701,13 @@ const Admin = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {investments.map((inv) => (
+                  {investments.filter(inv => {
+                    const matchesSearch = !searchQuery || 
+                      (inv.userId && inv.userId.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                      (inv.plan && inv.plan.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const matchesStatus = statusFilter === 'all' || inv.status === statusFilter;
+                    return matchesSearch && matchesStatus;
+                  }).map((inv) => (
                     <tr key={inv.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{inv.userId}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">UGX {inv.amount?.toLocaleString()}</td>
