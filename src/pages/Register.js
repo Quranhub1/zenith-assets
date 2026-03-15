@@ -90,7 +90,12 @@ const Register = () => {
         createdAt: new Date().toISOString()
       };
 
-      const result = await createUser(newUser);
+      // Filter out undefined values
+      const userData = Object.fromEntries(
+        Object.entries(newUser).map(([key, value]) => [key, value === undefined ? null : value])
+      );
+
+      const result = await createUser(userData);
       
       if (result.success) {
         // If referred, update referrer's referrals count
