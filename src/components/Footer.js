@@ -54,7 +54,7 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2">
               <li className="text-gray-400">
-                <a href="https://wa.me/0746160623" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">
+                <a href="https://wa.me/+256746160623" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">
                   📱 WhatsApp: 0746160623
                 </a>
               </li>
