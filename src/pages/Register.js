@@ -106,34 +106,11 @@ const Register = () => {
           navigate('/dashboard');
         }, 1500);
       } else {
-        // Fallback to local storage
-        localStorage.setItem('user_' + phone, JSON.stringify(newUser));
-        localStorage.setItem('zenith_user', JSON.stringify(newUser));
-        setSuccess('Account created successfully!');
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500);
+        setError('Failed to create account: ' + (result.error || 'Unknown error'));
       }
     } catch (err) {
       console.error("Registration error:", err);
-      // Fallback to local storage
-      const newUser = {
-        phone,
-        password,
-        balance: 0,
-        commission: 0,
-        referrals: 0,
-        videosWatched: 0,
-        referralCode: phone,
-        referredBy: null,
-        createdAt: new Date().toISOString()
-      };
-      localStorage.setItem('user_' + phone, JSON.stringify(newUser));
-      localStorage.setItem('zenith_user', JSON.stringify(newUser));
-      setSuccess('Account created successfully!');
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
+      setError('Registration failed. Please try again.');
     }
 
     setLoading(false);

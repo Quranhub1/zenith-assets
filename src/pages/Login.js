@@ -76,31 +76,7 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      const storedUser = localStorage.getItem('user_' + phone);
-      if (storedUser) {
-        const user = JSON.parse(storedUser);
-        if (user.password === password) {
-          localStorage.setItem('zenith_user', JSON.stringify(user));
-          navigate(redirectPath);
-        } else {
-          setError('Invalid phone number or password');
-        }
-      } else {
-        const newUser = {
-          phone,
-          password,
-          balance: 0,
-          commission: 0,
-          referrals: 0,
-          videosWatched: 0,
-          referralCode: phone,
-          referredBy: null,
-          createdAt: new Date().toISOString()
-        };
-        localStorage.setItem('user_' + phone, JSON.stringify(newUser));
-        localStorage.setItem('zenith_user', JSON.stringify(newUser));
-        navigate(redirectPath);
-      }
+      setError('Login failed. Please try again.');
     }
 
     setLoading(false);
