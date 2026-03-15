@@ -19,7 +19,8 @@ import {
   addTransaction, 
   deleteUser, 
   banUser, 
-  updateUserData
+  updateUserData,
+  createUser
 } from '../firebase';
 
 const Admin = () => {
@@ -32,6 +33,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('users');
   const [selectedUser, setSelectedUser] = useState(null);
   const [bonusAmount, setBonusAmount] = useState('');
+  const [migrating, setMigrating] = useState(false);
   
   // Action modal states
   const [showActionModal, setShowActionModal] = useState(false);
@@ -238,6 +240,36 @@ const Admin = () => {
     }
   };
 
+  // Migrate users from localStorage to Firebase
+  const migrateFromLocalStorage = async () => {
+    setMigrating(true);
+    try {
+      let migratedCount = 0;
+      // Get all keys from localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('user_')) {
+          const userData = localStorage.getItem(key);
+          if (userData) {
+            const user = JSON.parse(userData);
+            if (user.phone) {
+              console.log('Migrating user:', user.phone);
+              await createUser(user);
+              migratedCount++;
+            }
+          }
+        }
+      }
+      alert(`Migration complete! ${migratedCount} users migrated to Firebase.`);
+      // Refresh data
+      fetchData();
+    } catch (error) {
+      console.error('Migration error:', error);
+      alert('Migration failed: ' + error.message);
+    }
+    setMigrating(false);
+  };
+
   const handleAddBonus = async () => {
     if (!selectedUser || !bonusAmount) {
       alert('Please select a user and enter amount');
@@ -428,7 +460,16 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            <Link to="/dashboard" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={migrateFromLocalStorage} 
+                disabled={migrating}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm font-semibold disabled:opacity-50"
+              >
+                {migrating ? 'Migrating...' : 'Migrate from LocalStorage'}
+              </button>
+              <Link to="/dashboard" className="text-blue-600 hover:underline">Back to Dashboard</Link>
+            </div>
           </div>
         </div>
       </div>
