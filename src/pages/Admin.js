@@ -2,13 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UsersIcon, DollarSignIcon, TrendingUpIcon, TrendingDownIcon, CheckIcon, XIcon, TrashIcon, NoSymbolIcon, PencilIcon, UserIcon } from '../components/icons';
-import { getAllUsers, getAllDeposits, getAllWithdrawals, updateUserBalance, updateDepositStatus, updateWithdrawalStatus, addTransaction, deleteUser, banUser, updateUserData } from '../firebase';
+import { 
+  getAllUsers, 
+  getAllDeposits, 
+  getAllWithdrawals,
+  getAllInvestments,
+  updateUserBalance, 
+  updateDepositStatus, 
+  updateWithdrawalStatus,
+  updateInvestment,
+  deleteInvestment,
+  addTransaction, 
+  deleteUser, 
+  banUser, 
+  updateUserData,
+  getFirestore,
+  collection,
+  onSnapshot,
+  query
+} from '../firebase';
 
 const Admin = () => {
   const [user, setUser] = useState(null);
   const [users, setUsers] = useState([]);
   const [deposits, setDeposits] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
+  const [investments, setInvestments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('users');
   const [selectedUser, setSelectedUser] = useState(null);
@@ -19,6 +38,12 @@ const Admin = () => {
   const [actionType, setActionType] = useState('');
   const [actionAmount, setActionAmount] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  
+  // Real-time listeners
+  const [usersUnsubscribe, setUsersUnsubscribe] = useState(null);
+  const [depositsUnsubscribe, setDepositsUnsubscribe] = useState(null);
+  const [withdrawalsUnsubscribe, setWithdrawalsUnsubscribe] = useState(null);
+  const [investmentsUnsubscribe, setInvestmentsUnsubscribe] = useState(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('zenith_user');
@@ -36,10 +61,20 @@ const Admin = () => {
         return;
       }
       
-      fetchData();
+      // Set up real-time listeners
+      setupRealTimeListeners();
     } else {
       window.location.href = '/login';
     }
+    
+    // Cleanup function
+    return () => {
+      // Unsubscribe from real-time listeners if they exist
+      if (usersUnsubscribe) usersUnsubscribe();
+      if (depositsUnsubscribe) depositsUnsubscribe();
+      if (withdrawalsUnsubscribe) withdrawalsUnsubscribe();
+      if (investmentsUnsubscribe) investmentsUnsubscribe();
+    };
   }, []);
 
   const fetchData = async () => {
@@ -65,6 +100,74 @@ const Admin = () => {
       console.error("Error fetching data:", error);
     }
     setLoading(false);
+  };
+
+  const setupRealTimeListeners = () => {
+    try {
+      // Get Firestore instance
+      const db = getFirestore();
+      
+      // Set up real-time listener for users
+      const usersQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/users"));
+      const usersUnsubscribe = onSnapshot(usersQuery, (snapshot) => {
+        const usersList = [];
+        snapshot.forEach((doc) => {
+          usersList.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Normalize users - ensure each user has phone field (use id if phone is missing)
+        const normalizedUsers = usersList.map(user => ({
+          ...user,
+          phone: user.phone || user.id || 'Unknown'
+        }));
+        
+        setUsers(normalizedUsers);
+        console.log('Real-time users update:', normalizedUsers.length);
+      });
+      setUsersUnsubscribe(usersUnsubscribe);
+      
+      // Set up real-time listener for deposits
+      const depositsQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/deposits"));
+      const depositsUnsubscribe = onSnapshot(depositsQuery, (snapshot) => {
+        const depositsList = [];
+        snapshot.forEach((doc) => {
+          depositsList.push({ id: doc.id, ...doc.data() });
+        });
+        setDeposits(depositsList);
+        console.log('Real-time deposits update:', depositsList.length);
+      });
+      setDepositsUnsubscribe(depositsUnsubscribe);
+      
+      // Set up real-time listener for withdrawals
+      const withdrawalsQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/withdrawals"));
+      const withdrawalsUnsubscribe = onSnapshot(withdrawalsQuery, (snapshot) => {
+        const withdrawalsList = [];
+        snapshot.forEach((doc) => {
+          withdrawalsList.push({ id: doc.id, ...doc.data() });
+        });
+        setWithdrawals(withdrawalsList);
+        console.log('Real-time withdrawals update:', withdrawalsList.length);
+      });
+      setWithdrawalsUnsubscribe(withdrawalsUnsubscribe);
+      
+      // Set up real-time listener for investments
+      const investmentsQuery = query(collection(db, "ZENITH RESOURCES/Smjhzh926ep3xwRBGzcR/investments"));
+      const investmentsUnsubscribe = onSnapshot(investmentsQuery, (snapshot) => {
+        const investmentsList = [];
+        snapshot.forEach((doc) => {
+          investmentsList.push({ id: doc.id, ...doc.data() });
+        });
+        setInvestments(investmentsList);
+        console.log('Real-time investments update:', investmentsList.length);
+      });
+      setInvestmentsUnsubscribe(investmentsUnsubscribe);
+      
+    } catch (error) {
+      console.error("Error setting up real-time listeners:", error);
+      // Fallback to periodic fetching if real-time fails
+      fetchData();
+      setLoading(false);
+    }
   };
 
   const handleApproveDeposit = async (deposit) => {
@@ -151,14 +254,14 @@ const Admin = () => {
   };
 
   // Handle action modal submit
-  const handleActionSubmit = async () => {
+    const handleActionSubmit = async () => {
     if (!selectedUser) {
       alert('Please select a user first');
       setActionLoading(false);
       return;
     }
     setActionLoading(true);
-
+    
     try {
       switch (actionType) {
         case 'delete':
@@ -240,6 +343,42 @@ const Admin = () => {
     }
     
     setActionLoading(false);
+  };
+
+  // Investment handlers
+  const handleUpdateInvestment = async (investment) => {
+    // In a real app, this would open a modal to update investment details
+    // For now, we'll just toggle between active and completed
+    try {
+      const newStatus = investment.status === 'active' ? 'completed' : 'active';
+      await updateInvestment(investment.id, { status: newStatus });
+      alert(`Investment marked as ${newStatus}!`);
+    } catch (error) {
+      console.error("Error updating investment:", error);
+      alert('Error updating investment');
+    }
+  };
+
+  const handleStopInvestment = async (investment) => {
+    try {
+      await updateInvestment(investment.id, { status: 'cancelled' });
+      alert('Investment stopped successfully!');
+    } catch (error) {
+      console.error("Error stopping investment:", error);
+      alert('Error stopping investment');
+    }
+  };
+
+  const handleDeleteInvestment = async (investment) => {
+    try {
+      if (confirm(`Are you sure you want to DELETE this investment? This action cannot be undone.`)) {
+        await deleteInvestment(investment.id);
+        alert('Investment deleted successfully!');
+      }
+    } catch (error) {
+      console.error("Error deleting investment:", error);
+      alert('Error deleting investment');
+    }
   };
 
   const openActionModal = (type) => {
@@ -325,6 +464,12 @@ const Admin = () => {
             Withdrawals ({pendingWithdrawals.length} pending)
           </button>
           <button
+            onClick={() => setActiveTab('investments')}
+            className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap ${activeTab === 'investments' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          >
+            Investments
+          </button>
+          <button
             onClick={() => setActiveTab('bonus')}
             className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap ${activeTab === 'bonus' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
           >
@@ -392,7 +537,7 @@ const Admin = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -406,7 +551,7 @@ const Admin = () => {
                           {d.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(d.createdAt).toLocaleDateString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(d.createdAt).toLocaleString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {d.status === 'pending' && (
                           <div className="flex space-x-2">
@@ -418,6 +563,109 @@ const Admin = () => {
                             </button>
                           </div>
                         )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
+        
+        {/* Withdrawals Table */}
+        {activeTab === 'withdrawals' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden overflow-x-auto">
+              <table className="w-full min-w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Receive To</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {withdrawals.map((w) => (
+                    <tr key={w.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{w.userId}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">UGX {w.amount?.toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">{w.phone || w.userId}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs rounded ${w.status === 'approved' ? 'bg-green-100 text-green-800' : w.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
+                          {w.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{w.createdAt ? new Date(w.createdAt).toLocaleString() : 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {w.status === 'pending' && (
+                          <div className="flex space-x-2">
+                            <button onClick={() => handleApproveWithdrawal(w)} className="text-green-600 hover:text-green-800">
+                              <CheckIcon className="w-5 h-5" />
+                            </button>
+                            <button onClick={() => handleRejectWithdrawal(w)} className="text-red-600 hover:text-red-800">
+                              <XIcon className="w-5 h-5" />
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
+        )}
+        
+        {/* Investments Table */}
+        {activeTab === 'investments' && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden overflow-x-auto">
+              <table className="w-full min-w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Returns</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {investments.map((inv) => (
+                    <tr key={inv.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{inv.userId}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">UGX {inv.amount?.toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{inv.plan || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">UGX {inv.returns?.toLocaleString() || 0}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 text-xs rounded ${inv.status === 'active' ? 'bg-green-100 text-green-800' : inv.status === 'completed' ? 'bg-blue-100 text-blue-800' : inv.status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {inv.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(inv.createdAt).toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex space-x-2">
+                          {inv.status === 'active' && (
+                            <>
+                              <button onClick={() => handleUpdateInvestment(inv)} className="text-blue-600 hover:text-blue-800">
+                                <PencilIcon className="w-5 h-5" />
+                              </button>
+                              <button onClick={() => handleStopInvestment(inv)} className="text-orange-600 hover:text-orange-800">
+                                <NoSymbolIcon className="w-5 h-5" />
+                              </button>
+                            </>
+                          )}
+                          {inv.status === 'completed' && (
+                            <button onClick={() => handleDeleteInvestment(inv)} className="text-red-600 hover:text-red-800">
+                              <TrashIcon className="w-5 h-5" />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

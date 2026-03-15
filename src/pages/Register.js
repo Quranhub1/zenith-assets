@@ -41,6 +41,14 @@ const Register = () => {
       return;
     }
 
+    // Validate phone number format (basic validation)
+    const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(phone)) {
+      setError('Please enter a valid phone number');
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);

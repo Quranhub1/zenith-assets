@@ -17,9 +17,48 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+let app;
+let db;
+let auth;
+
+// Check if Firebase is properly configured
+const isFirebaseConfigured = () => {
+  return (
+    process.env.REACT_APP_FIREBASE_API_KEY &&
+    process.env.REACT_APP_FIREBASE_API_KEY !== 'your_api_key_here' &&
+    process.env.REACT_APP_FIREBASE_AUTH_DOMAIN &&
+    process.env.REACT_APP_FIREBASE_AUTH_DOMAIN !== 'your_project.firebaseapp.com' &&
+    process.env.REACT_APP_FIREBASE_PROJECT_ID &&
+    process.env.REACT_APP_FIREBASE_PROJECT_ID !== 'your_project_id'
+  );
+};
+
+try {
+  if (isFirebaseConfigured()) {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    auth = getAuth(app);
+    console.log('Firebase initialized successfully');
+  } else {
+    console.warn('Firebase not configured properly. Using mock functions for development.');
+    // Initialize with empty objects to prevent errors
+    app = {};
+    db = {
+      collection: () => ({}),
+      doc: () => ({})
+    };
+    auth = {};
+  }
+} catch (error) {
+  console.error('Error initializing Firebase:', error);
+  // Initialize with empty objects to prevent errors
+  app = {};
+  db = {
+    collection: () => ({}),
+    doc: () => ({})
+  };
+  auth = {};
+}
 
 // Database References
 const ZENITH_RESOURCES = "ZENITH RESOURCES";
@@ -212,6 +251,43 @@ export const getAllWithdrawals = async () => {
   } catch (error) {
     console.error("Error getting all withdrawals:", error);
     return [];
+  }
+};
+
+// Get all investments (for admin)
+export const getAllInvestments = async () => {
+  try {
+    const snapshot = await getDocs(collection(db, investmentsCollection));
+    const investments = [];
+    snapshot.forEach((doc) => {
+      investments.push({ id: doc.id, ...doc.data() });
+    });
+    return investments;
+  } catch (error) {
+    console.error("Error getting all investments:", error);
+    return [];
+  }
+};
+
+// Update investment
+export const updateInvestment = async (investmentId, investmentData) => {
+  try {
+    await updateDoc(doc(db, investmentsCollection, investmentId), investmentData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating investment:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Delete investment
+export const deleteInvestment = async (investmentId) => {
+  try {
+    await deleteDoc(doc(db, investmentsCollection, investmentId));
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting investment:", error);
+    return { success: false, error: error.message };
   }
 };
 
