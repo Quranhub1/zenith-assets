@@ -59,6 +59,11 @@ const Footer = () => {
                 </a>
               </li>
               <li className="text-gray-400">
+                <a href="https://whatsapp.com/channel/0029Vb7A7WA0G0XcN3TTu53J" target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">
+                  📢 WhatsApp Channel
+                </a>
+              </li>
+              <li className="text-gray-400">
                 <a href="mailto:zenithassets@gmail.com" className="hover:text-white transition-colors">
                   ✉️ zenithassets@gmail.com
                 </a>
