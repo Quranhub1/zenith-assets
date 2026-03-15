@@ -39,24 +39,24 @@ const Investments = () => {
   const investmentPackages = [
     {
       id: 1,
-      name: 'AirPods Starter Pack',
-      description: 'Start your investment journey with premium audio',
+      name: 'Starter Pack',
+      description: 'Start your investment journey with quick returns',
       image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=800',
-      minAmount: 20000,
-      maxAmount: 50000,
-      duration: '30 days',
-      dailyReturns: '3%',
-      totalReturns: 'UGX 38,000',
+      minAmount: 50000,
+      maxAmount: 200000,
+      duration: '21 days',
+      dailyReturns: '7%',
+      totalReturns: 'UGX 73,500',
       category: 'Starter',
       locked: false
     },
     {
       id: 2,
-      name: 'iPhone SE Growth Plan',
-      description: 'Grow your wealth with powerful smartphone technology',
+      name: 'Growth Plan',
+      description: 'Grow your wealth with steady daily returns',
       image: 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800',
       minAmount: 100000,
-      maxAmount: 1000000,
+      maxAmount: 5000000,
       duration: '45 days',
       dailyReturns: '4%',
       totalReturns: 'UGX 280,000',
@@ -65,53 +65,53 @@ const Investments = () => {
     },
     {
       id: 3,
-      name: 'iPhone 14 Premium Bundle',
-      description: 'Premium investment with flagship smartphone technology',
+      name: 'Premium Plan',
+      description: 'Premium investment with high daily returns',
       image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800',
-      minAmount: 150000,
-      maxAmount: 2000000,
+      minAmount: 250000,
+      maxAmount: 10000000,
       duration: '60 days',
-      dailyReturns: '5%',
-      totalReturns: 'UGX 600,000',
+      dailyReturns: '10%',
+      totalReturns: 'UGX 1,100,000',
       category: 'Premium',
       locked: true
     },
     {
       id: 4,
-      name: 'iPhone 15 Pro Max Elite',
-      description: 'Elite investment for maximum returns with flagship tech',
+      name: 'Elite Plan',
+      description: 'Elite investment for maximum returns',
       image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800',
-      minAmount: 250000,
-      maxAmount: 5000000,
-      duration: '90 days',
-      dailyReturns: '6%',
-      totalReturns: 'UGX 1,600,000',
+      minAmount: 5000000,
+      maxAmount: 50000000,
+      duration: '60 days',
+      dailyReturns: '20%',
+      totalReturns: 'UGX 11,000,000',
       category: 'Elite',
       locked: true
     },
     {
       id: 5,
-      name: 'MacBook Pro Platinum',
-      description: 'VIP investment with professional computing power',
+      name: 'Platinum Plan',
+      description: 'VIP investment with premium returns',
       image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800',
-      minAmount: 500000,
-      maxAmount: 10000000,
-      duration: '120 days',
-      dailyReturns: '7%',
-      totalReturns: 'UGX 4,700,000',
+      minAmount: 1000000,
+      maxAmount: 100000000,
+      duration: '60 days',
+      dailyReturns: '25%',
+      totalReturns: 'UGX 16,000,000',
       category: 'Platinum',
       locked: true
     },
     {
       id: 6,
-      name: 'Apple Vision Pro Diamond',
+      name: 'Diamond Plan',
       description: 'Ultimate investment in future technology',
       image: 'https://images.unsplash.com/photo-1625842268584-8f3296236761?w=800',
-      minAmount: 1000000,
-      maxAmount: 50000000,
-      duration: '180 days',
-      dailyReturns: '10%',
-      totalReturns: 'UGX 19,000,000',
+      minAmount: 2000000,
+      maxAmount: 100000000,
+      duration: '60 days',
+      dailyReturns: '4%',
+      totalReturns: 'UGX 5,680,000',
       category: 'Diamond',
       locked: true
     }
@@ -163,7 +163,7 @@ const Investments = () => {
     // Calculate daily returns
     const dailyReturnRate = parseFloat(selectedPackage.dailyReturns) / 100;
     const dailyEarnings = amount * dailyReturnRate;
-    const totalDays = parseInt(selectedPackage.duration);
+    const totalDays = parseInt(selectedPackage.duration.split(' ')[0]);
     const expectedReturn = amount + (dailyEarnings * totalDays);
     const userPhone = user.phone || user.id;
     const newBalance = user.balance - amount;
